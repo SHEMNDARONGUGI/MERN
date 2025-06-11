@@ -1,0 +1,70 @@
+//Hands-on One
+
+CREATE
+use schoolDB
+
+db.students.insertMany([
+    {student_id: "S001", name: "Joy", age: 20, track: "Web"},
+    {student_id: "S002", name: "John", age: 22, track: "Data Science"},
+    {student_id: "S003", name: "Alice", age: 21, track: "AI"},
+    {student_id: "S004", name: "Bob", age: 23, track: "Mobile"},
+    {student_id: "S005", name: "Charlie", age: 19, track: "Data Science"}
+])
+db.students.find() // to retrieve on shell
+
+//Hands-on Two
+db.students.updateMany({}, {
+    //set is and operator that helps to update
+    $set: {
+        contact: { email: "user@example.com" ,phone: "0710102030" },
+        emergency: { name: "parent", relation: "Mother", phone: "0710102034" }  
+
+    }
+})
+
+//Hands-on three: Courses & mentors with referencing
+
+db.mentors.insertMany([
+    {mentor_id: "M001", name: "Mr. Kasongo", specialty: "Wantam" },
+    {mentor_id: "M002", name: "Mr. WiggyG", specialty: "Truthful" },
+    {mentor_id: "M003", name: "Mr. Dedan", specialty: "AI" }
+])
+
+// linking the mentors to courses
+
+db.courses.insertMany([
+    {course_id: "C101", title: "Lyingtology", duration_weeks: 5, mentor_id: "M001"},
+    {course_id: "C102", title: "Poet", duration_weeks: 5, mentor_id: "M002"},
+    {course_id: "C103", title: "AI for beginners", duration_weeks: 3, mentor_id: "M003"}
+])
+
+ //Hands-on Four: connecting everything together with enrollments(Analytics)
+ db.enrollments.insertMany([
+    {student_id: "S001", course_id: "C101", status: "in-progress", score: 88},
+    {student_id: "S003", course_id: "C102", status: "completed", score: 92},
+    {student_id: "S004", course_id: "C101", status: "in-progress", score: 78},
+    {student_id: "S005", course_id: "C103", status: "completed", score: 85}
+ ])
+
+ // Aggregation: Students per course
+ db.enrollments.aggregate([
+    {$group: {_id: "$course_id",  total_students: {$sum: 1}}}
+ ])
+
+ //Aggregation: Average score per course
+ db.enrollments.aggregate([
+    {$group: {_id: "$course_id", avg_score: { $avg: "$score"}}}
+ ]) 
+
+ //Aggregation: student per track
+ db.student.aggregate([
+    {$group: {_id: "$track", total_students: {$sum: 1}}}
+ ])
+
+ //Aggregation: Average age per track   
+
+ db.student.aggregate([
+    {$group: {_id: "$track", avg_age: { $avg: "$age"}}}
+ ])
+
+  
